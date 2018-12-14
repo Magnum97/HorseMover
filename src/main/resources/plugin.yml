@@ -1,0 +1,5 @@
+name: HorseMover
+version: ${project.version}
+main: ${project.groupId}.${project.artifactId}
+authors: [Magnum1997]
+description: Move horse data from 2.0 to 3.0 dBa

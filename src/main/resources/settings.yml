@@ -1,0 +1,15 @@
+plugin:
+  prefix: "&9[&aHorseMover&9] "
+config: 2
+
+sql:
+  host: 'localhost'
+  port: '3306'
+  user: 'minecraft'
+  password: 'p@$$word!'
+  # dba: old database
+  dBa: 'horse_mover_A'
+  # dbb: new database
+  dBb: 'horse_mover_B'
+  fromtable: 'tableA'
+  totable: 'tableB'
