@@ -3,12 +3,11 @@ package me.magnum.horsemover;
 import co.aikar.commands.BukkitCommandManager;
 import lombok.Getter;
 import lombok.Setter;
-import me.magnum.horsemover.commands.SQL;
+import me.magnum.horsemover.commands.HM;
 import me.magnum.horsemover.sql.Database;
 import me.magnum.horsemover.util.Settings;
 import me.magnum.horsemover.util.SimpleConfig;
 import me.vagdedes.mysql.database.MySQL;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final @Setter
@@ -52,12 +51,12 @@ class HorseMover extends JavaPlugin {
 
     private void registerCommand() {
         cmdMgr = new BukkitCommandManager(this);
-        cmdMgr.registerCommand(new SQL());
+        cmdMgr.registerCommand(new HM());
     }
 
 /*
-        Common.registerCommand(new SQL(
-                "sql", "Check sql status", "/SQL", Arrays.asList("status", "dBa")));
+        Common.registerCommand(new HM(
+                "sql", "Check sql status", "/HM", Arrays.asList("status", "dBa")));
 
     }
 */

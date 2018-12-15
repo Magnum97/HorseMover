@@ -91,12 +91,12 @@ class Database {
         }.runTaskAsynchronously(getPlugin());
 
 */
-        dbSet('a');
+//        dbSet('a');
         if (!(tableExists(tableFrom))) {
             createTable(tableFrom, "`ID` INT NOT NULL AUTO_INCREMENT COMMENT '',`o_UUID` VARCHAR(36) NOT NULL COMMENT '',`h_Name` VARCHAR(255) NOT NULL COMMENT '',`Rented` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '',`h_Color` VARCHAR(45) NULL COMMENT '',`h_Variant` VARCHAR(45) NULL COMMENT '',`h_Style` VARCHAR(45) NULL DEFAULT NULL COMMENT '',`h_Gender` VARCHAR(45) NULL COMMENT '',`h_Breed` VARCHAR(45) NULL COMMENT '',`h_Armor` VARCHAR(45) NULL COMMENT '',`h_Saddle` TINYINT(1) NULL DEFAULT 0 COMMENT '',`h_LastBreed` BIGINT(20) NOT NULL DEFAULT 0 COMMENT '',`travel_dist` DOUBLE NOT NULL DEFAULT 0 COMMENT '',`s_Agility` DOUBLE NOT NULL DEFAULT 0 COMMENT '',`sw_Lvl`  TINYINT(1) NULL DEFAULT 0 COMMENT '',`ag_Lvl`  TINYINT(1) NULL DEFAULT 0 COMMENT '',`s_Energy` TINYINT(3) NOT NULL DEFAULT 100 COMMENT '',`s_Swiftness` DOUBLE NOT NULL DEFAULT 0 COMMENT '',PRIMARY KEY (`ID`)  COMMENT '',UNIQUE INDEX `ID_UNIQUE` (`ID` ASC)  COMMENT ''");
         }
-        dbSet('b');
-        MySQL.reconnect();
+//        dbSet('b');
+//        MySQL.reconnect();
         if (!(tableExists(tableTo))) {
             createTable(tableTo, "`ID` INT NOT NULL AUTO_INCREMENT COMMENT '',`o_UUID` VARCHAR(36) NOT NULL COMMENT '',`h_Name` VARCHAR(255) NOT NULL COMMENT '',`Rented` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '',`h_Color` VARCHAR(45) NULL COMMENT '',`h_Variant` VARCHAR(45) NULL COMMENT '',`h_Style` VARCHAR(45) NULL DEFAULT NULL COMMENT '',`h_Gender` VARCHAR(45) NULL COMMENT '',`h_Breed` VARCHAR(45) NULL COMMENT '',`h_Armor` VARCHAR(45) NULL COMMENT '',`h_Saddle` TINYINT(1) NULL DEFAULT 0 COMMENT '',`h_LastBreed` BIGINT(20) NOT NULL DEFAULT 0 COMMENT '',`travel_dist` DOUBLE NOT NULL DEFAULT 0 COMMENT '',`s_Agility` DOUBLE NOT NULL DEFAULT 0 COMMENT '',`sw_Lvl`  TINYINT(1) NULL DEFAULT 0 COMMENT '',`ag_Lvl`  TINYINT(1) NULL DEFAULT 0 COMMENT '',`s_Energy` TINYINT(3) NOT NULL DEFAULT 100 COMMENT '',`s_Swiftness` DOUBLE NOT NULL DEFAULT 0 COMMENT '',PRIMARY KEY (`ID`)  COMMENT '',UNIQUE INDEX `ID_UNIQUE` (`ID` ASC)  COMMENT ''");
         }
@@ -112,14 +112,14 @@ class Database {
     public void showStatus(CommandSender sender) {
         if (MySQL.isConnected()) {
             Common.tell(sender,
-                    "SQL Status: &aConnected to SQL " + Config.getDatabase());
+                    "HM Status: &aConnected to HM " + Config.getDatabase());
         } else {
-            Common.tell(sender, "SQL Status: &cDatabase not connected.");
+            Common.tell(sender, "HM Status: &cDatabase not connected.");
         }
     }
 
 
-// --Commented out by Inspection START (12/13/2018 1:04 AM):
+    // --Commented out by Inspection START (12/13/2018 1:04 AM):
     @SuppressWarnings("deprication")
     public void getHorse(CommandSender sender, String user, String horse) {
         MySQL.disconnect();
@@ -134,20 +134,66 @@ class Database {
 
             if (rs.first()) {
                 rs.first();
-            do {
-                String hname = ((ResultSet) rs).getNString("h_Name");
-                String color = ((ResultSet) rs).getNString("h_Color");
-                String breed = ((ResultSet) rs).getNString("h_Breed");
-                String gender = ((ResultSet) rs).getNString("h_Gender");
-                String result = "\n&fName: " + hname + " is a " + color + " " + breed + " " + gender;
-                Common.tell(sender, pre + result);
-            } while (rs.next());
+                do {
+                    String hname = ((ResultSet) rs).getNString("h_Name");
+                    String color = ((ResultSet) rs).getNString("h_Color");
+                    String breed = ((ResultSet) rs).getNString("h_Breed");
+                    String gender = ((ResultSet) rs).getNString("h_Gender");
+                    String result = "\n&fName: " + hname + " is a " + color + " " + breed + " " + gender;
+                    Common.tell(sender, pre + result);
+                } while (rs.next());
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (NullPointerException npe) {}
+        } catch (NullPointerException npe) {
+        }
     }
+
+    @SuppressWarnings("deprication")
+    public void copyHorse(CommandSender sender, String user, String horse) {
+        MySQL.reconnect();
+        OfflinePlayer offp = Bukkit.getOfflinePlayer(user);
+        playerId = offp.getUniqueId().toString();
+////            Common.tell(sender, pre + "&FUUID for " + user + " is " + uuid);
+        try {
+            dbSet('a');
+            MySQL.reconnect();
+            ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' AND h_name='" + horse + "' ORDER BY h_name;");
+
+
+            if (rs.first()) {
+                rs.first();
+                String hname = rs.getNString("h_Name");
+                String color = rs.getNString("h_Color");
+                String breed = rs.getNString("h_Breed");
+                String gender = rs.getNString("h_Gender");
+                String result = "\n&fName: " + hname + " is a " + color + " " + breed + " " + gender;
+                Common.tell(sender, pre + result, pre + "&aCopying from &F" + tableFrom + "&a to " + tableTo);
+                // INSERT INTO horse_mover_b.horse_new SELECT * from horse_mover_a.horse_old WHERE h_Name='Pokey';
+                MySQL.update("INSERT INTO " + tableTo + " SELECT * from " + tableFrom + " WHERE o_UUID='" + playerId + "' AND h_Name='" + horse + "';");
+            } else Common.tell(sender, pre + "&eNo horse named &f" + horse + "&e found for owner &f" + user);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NullPointerException npe) {
+        }
+    }
+
+/*
+    public void saveHorse(String name, String color, String breed, String gender) {
+        dbSet('b');
+        MySQL.reconnect();
+        try {
+            MySQL.update("INSERT ");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+*/
+
+
 //
 //
 ///*
@@ -172,15 +218,15 @@ class Database {
 //            x = p.getLocation().getBlockX();
 //            y = p.getLocation().getBlockY();
 //            z = p.getLocation().getBlockZ();
-//            if (SQL.exists("IGN", user, tableFrom)) {
-//                SQL.set("Player_UUID", playerId, "IGN", "=", user, tableFrom);
-//                SQL.set("x", x, "IGN", "=", user, tableFrom);
-//                SQL.set("y", y, "IGN", "=", user, tableFrom);
-//                SQL.set("z", z, "IGN", "=", user, tableFrom);
+//            if (HM.exists("IGN", user, tableFrom)) {
+//                HM.set("Player_UUID", playerId, "IGN", "=", user, tableFrom);
+//                HM.set("x", x, "IGN", "=", user, tableFrom);
+//                HM.set("y", y, "IGN", "=", user, tableFrom);
+//                HM.set("z", z, "IGN", "=", user, tableFrom);
 //
 //            } else {
 //
-//                SQL.insertData("Player_UUID, IGN, x, y, z", "'" + playerId + "'" + ", '" + user + "', '" + x + "', '" + y + "', '" + z + "'", tableFrom);
+//                HM.insertData("Player_UUID, IGN, x, y, z", "'" + playerId + "'" + ", '" + user + "', '" + x + "', '" + y + "', '" + z + "'", tableFrom);
 //            }
 //
 //
@@ -190,8 +236,8 @@ class Database {
 ///*
 //        public void purgePlayer (CommandSender sender, String user){
 //            ign = user;
-//            if (SQL.exists("IGN", user, tableFrom)) {
-//                SQL.deleteData("IGN", "=", ign, tableFrom);
+//            if (HM.exists("IGN", user, tableFrom)) {
+//                HM.deleteData("IGN", "=", ign, tableFrom);
 //            */
 ///*
 //                public static void deleteData(String column, String logic_gate, String data, String table) {

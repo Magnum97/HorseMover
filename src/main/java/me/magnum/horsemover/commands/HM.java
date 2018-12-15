@@ -19,9 +19,9 @@ import static me.magnum.horsemover.HorseMover.version;
 
 
 @CommandAlias("horsemover|hm|movehorse")
-public class SQL extends BaseCommand {
+public class HM extends BaseCommand {
 
-    public SQL() {
+    public HM() {
     }
 
     @Default
@@ -36,7 +36,7 @@ public class SQL extends BaseCommand {
                 pre + "&bDatabase status: &a/hm status",
                 pre + "&bShow settings: &a/hm config",
                 pre + "&bShow Player's last location: &a/hm where <username>",
-                pre + "&bFetch user info from dBa: &a/hm get <username>",
+                pre + "&bFetch user info from dBa: &a/hm get <username> <horsename>",
                 pre + "&fWe are making more commands. Help text will be here.",
                 pre + "&e----------------------------------------");
     }
@@ -81,6 +81,7 @@ public class SQL extends BaseCommand {
                 pre + "Database B: " + Database.getdBb(),
                 pre + "Move to: " + Database.tableTo);
     }
+
 
     @Subcommand("reload")
     public void onReload(CommandSender sender) {
@@ -134,7 +135,34 @@ public class SQL extends BaseCommand {
             }
 */
         }
+    @Subcommand("copy")
+    @CommandPermission("horsemover.admin")
+    @CommandCompletion("@Players")
+    public void oncopy(CommandSender sender, String user, String hname) {
+        if (CheckSender.isCommand(sender)) {return;}
+//            Player p = (Player) sender;
+        if (user.equals("help")) {
+            Common.tell(sender, pre + "&bTo see a player's list of horses : &a/hm copy <username>", pre + "&bTo copy horse info: &a/hm copy <username> <horsename>");
+            return;
+        }
+        new Database().copyHorse(sender,user,hname);
+
+
+
+        //            final Database db = HorseMover.getDatabase();
+//            final String horse = db.getHorse(user);
+//            new Database().getHorse(sender, user, horse);
+
+/*
+            if ((name == null) || (name.trim().isEmpty())) {
+                name = p.getName();
+            } else if ((name == null) || (name.trim().isEmpty()) || (name.equals("help"))) {
+                Common.tell(sender, pre + "&bTo get a player's last location: &a/hm get <username>");
+                return;
+            }
+*/
     }
+}
 
 /*
     @Subcommand("remove")
