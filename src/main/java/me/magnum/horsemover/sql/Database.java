@@ -112,9 +112,9 @@ class Database {
     public void showStatus(CommandSender sender) {
         if (MySQL.isConnected()) {
             Common.tell(sender,
-                    "HM Status: &aConnected to HM " + Config.getDatabase());
+                    pre+"Status: &aConnected to " + Config.getDatabase());
         } else {
-            Common.tell(sender, "HM Status: &cDatabase not connected.");
+            Common.tell(sender,pre+ "Status: &cDatabase not connected.");
         }
     }
 
