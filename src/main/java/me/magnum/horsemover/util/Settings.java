@@ -21,7 +21,7 @@ public class Settings extends SimpleConfig {
                 " ",
                 " Unfortunately, due to how Bukkit saves .yml files,",
                 " all comments in your file were lost. Please open",
-                " " + fileName + " directly to browse the default values.",
+                " " + fileName + " from jar to browse the default values.",
                 "--------------------------------------------------------"
         });
     }

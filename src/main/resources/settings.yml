@@ -1,15 +1,16 @@
 plugin:
-  prefix: "&9[&aHorseMover&9] "
+  prefix: "&9[&aHorseMover&9]&f "
+
 config: 2
 
 sql:
   host: 'localhost'
   port: '3306'
-  user: 'minecraft'
-  password: 'p@$$word!'
+  user: 'root'
+  password: 'PhillipLover2003'
   # dba: old database
-  dBa: 'horse_mover_A'
+  dba: 'horse_mover_A'
+  fromtable: 'horse_old'
   # dbb: new database
-  dBb: 'horse_mover_B'
-  fromtable: 'tableA'
-  totable: 'tableB'
+  dbb: 'horse_mover_B'
+  totable: 'horse_new'

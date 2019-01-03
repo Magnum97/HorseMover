@@ -1,6 +1,7 @@
 package me.magnum.horsemover;
 
 import co.aikar.commands.BukkitCommandManager;
+import eu.hexagonmc.spigot.annotation.plugin.Plugin;
 import lombok.Getter;
 import lombok.Setter;
 import me.magnum.horsemover.commands.HM;
@@ -35,10 +36,6 @@ class HorseMover extends JavaPlugin {
         HorseMover.pre = pre;
     }
 
-    public String getPre() {
-        return pre;
-    }
-
     @Override
     public void onEnable() {
         plugin = this;
@@ -65,6 +62,7 @@ class HorseMover extends JavaPlugin {
     public void onDisable() {
         if (MySQL.isConnected()) {
             MySQL.disconnect();
+
                     }
     }
 }
