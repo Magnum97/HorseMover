@@ -7,7 +7,7 @@
     <groupId>me.magnum.horsemover</groupId>
     <artifactId>HorseMover</artifactId>
     <version>
-        2.2-build-${timestamp}
+        2.0-b0113-0237
     </version>
     <packaging>jar</packaging>
 
@@ -20,14 +20,11 @@
         <author>Magnum1997</author>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>MMDD-HHmm</maven.build.timestamp.format>
     </properties>
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>${project.artifactId}</finalName>
-        <!--<finalName>${project.artifactId}-${project.version}</finalName>-->
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -42,9 +39,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -72,6 +66,13 @@
                                     <pattern>co.aikar.commands</pattern>
                                     <shadedPattern>${project.groupId}.acf</shadedPattern> <!-- Replace this -->
                                 </relocation>
+
+<!--
+                                <relocation>
+                                    <pattern>me.desht.dhutils</pattern>
+                                    <shadedPattern>${project.groupId}.dhutils</shadedPattern>
+                                </relocation>
+-->
                             </relocations>
                             <minimizeJar>true</minimizeJar>
                         </configuration>
@@ -119,47 +120,39 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Spigot Annotation -->
-        <dependency>
-            <groupId>eu.hexagonmc</groupId>
-            <artifactId>spigot-annotations</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- DH Utils -->
-        <!--
-                <dependency>
-                    <groupId>com.github.Magnum97</groupId>
-                    <artifactId>dhutils-lib</artifactId>
-                    <version>LATEST</version>
-                </dependency>
-        -->
+<!--
+        <dependency>
+            <groupId>com.github.Magnum97</groupId>
+            <artifactId>dhutils-lib</artifactId>
+            <version>LATEST</version>
+        </dependency>
+-->
 
-        <!--
-                <dependency>
-                    <groupId>com.github.Magnum97</groupId>
-                    <artifactId>MojangAPI</artifactId>
-                    <version>master-SNAPSHOT</version>
-                    <scope>compile</scope>
-                </dependency>
-        -->
-        <!--
-                <dependency>
-                    <groupId>com.zaxxer</groupId>
-                    <artifactId>HikariCP</artifactId>
-                    <version>LATEST</version>
-                    <scope>compile</scope>
-                </dependency>
-        -->
-        <!--
-          <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                    <version>1.6.4</version>
-                    <scope>compile</scope>
-                </dependency>
-         -->
+<!--
+        <dependency>
+            <groupId>com.github.Magnum97</groupId>
+            <artifactId>MojangAPI</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+-->
+<!--
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+-->
+<!--
+  <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.4</version>
+            <scope>compile</scope>
+        </dependency>
+ -->
         <!--Spigot API-->
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -168,14 +161,14 @@
             <scope>provided</scope>
         </dependency>
         <!-- GUI Source -->
-        <!--
-                <dependency>
-                    <groupId>com.github.kangarko</groupId>
-                    <artifactId>UIDesigner</artifactId>
-                    <version>1.1.6</version> &lt;!&ndash; replace with latest version &ndash;&gt;
-                    <scope>compile</scope>
-                </dependency>
-        -->
+<!--
+        <dependency>
+            <groupId>com.github.kangarko</groupId>
+            <artifactId>UIDesigner</artifactId>
+            <version>1.1.6</version> &lt;!&ndash; replace with latest version &ndash;&gt;
+            <scope>compile</scope>
+        </dependency>
+-->
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -193,7 +186,6 @@
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId> <!-- Don't forget to replace this -->
             <version>0.5.0-SNAPSHOT</version> <!-- Replace this as well-->
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>code.nextgen.sqlibrary</groupId>

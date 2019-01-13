@@ -19,88 +19,65 @@ import static me.magnum.horsemover.HorseMover.version;
 @CommandAlias("horsemover|hm|movehorse")
 public class HM extends BaseCommand {
 
-    public HM() {
+    public HM () {
     }
 
+    @Default
     @CatchUnknown
-    @Subcommand("help")
-    public void onHelp(CommandSender sender) {
+    @Subcommand ("help")
+    public void onHelp (CommandSender sender) {
         Common.tell(sender, pre + "&FVersion&A " + version,
                 pre + "&e-------------Commands-------------------",
-                pre + "&bTo get horse info: &a/horsemover get"); // "&e<username> (horse name)",
-        if ((sender.isPermissionSet("horsemover.admin")) || (CheckSender.isConsole(sender))) {
-            Common.tell(sender, pre + "&e-------- Admin Commands ----------------",
-                    pre + "&FTo backup a horse: &A/horsemover copy", // &eusername horsename",
-                    pre + "&bShow settings: &a/horsemover config",
-                    pre + "&FConnect, disconnect or reconnect database:",
-                    pre + "&a/hm connect &F|&A /hm disconnect &F|&A /reconnect",
-                    pre + "&bDatabase status: &a/horsemover status",
-                    pre + "&fReload settings &a/hm reload");
-        }
-        Common.tell(sender, pre + "",
-                pre + "&fMore help: &e/horsemover <cmd> help",
+                "",
+                //pre + "&fSubCommands for &lhorsemover:",
+                pre + "&bHorse info: &a/hm get &e<username> <horse name>",
+                pre + "&FTo backup a horse: &A/hm copy &eusername horsename",
+                pre + "",
+                pre + "&bShow settings: &a/hm config",
+                pre + "&FConnect, disconnect or reconnect database:",
+                pre + "&a/hm connect &F|&A /hm disconnect &F|&A /reconnect",
+                pre + " ",
+                pre + "&bDatabase status: &a/horsemover status",
+                pre + "&fReload settings &a/hm reload",
+                pre + "",
+                pre + "&fMore help: &e/hm <cmd> help",
                 pre + "&e----------------------------------------");
         //pre + "&bFetch user info from dBa: &a/hm get <username> <horsename>",
-//        Player p = (Player) sender;
     }
 
-    @Subcommand("get")
-    @CommandCompletion("@Players")
-    public void onGet(CommandSender sender, @Default("help") String user, @Default("all") String horse) {
+    @Subcommand ("get")
+    @CommandPermission ("horsemover.admin")
+    @CommandCompletion ("@Players")
+    public void onGet (CommandSender sender, @Optional String user, @Optional String horse) {
         if (CheckSender.isCommand(sender)) {
             return;
         }
+//            Player p = (Player) sender;
         if (user.equals("help")) {
-            Common.tell(sender,
-                    pre + "&bTo get a list of player's horses : &a/horsemover get <username>", pre + "&bTo get horse info: &a/horsemover get <username> (horsename)");
+            Common.tell(sender, pre + "&bTo see a player's list of horses : &a/hm get <username>", pre + "&bTo get horse info: &a/hm get <username> (horsename)");
             return;
         }
         new Database().getHorse(sender, user, horse);
     }
 
-    @Subcommand("copy")
-    @CommandPermission("horsemover.admin")
-    @CommandCompletion("@Players")
-    public void onCopy(CommandSender sender, @Default("help") String user, @Default(" ") String hname) {
+    @Subcommand ("copy")
+    @CommandPermission ("horsemover.admin")
+    @CommandCompletion ("@Players")
+    public void oncopy (CommandSender sender, @Optional String user, @Optional String hname) {
         if (CheckSender.isCommand(sender)) {
             return;
         }
 //            Player p = r;
-        if ((user.equals("help"))) {
+        if ((user.equals("help")) || user.length() < 1) {
             Common.tell(sender, pre + "&bTo copy horse info: &a/horsemover copy <username> <horsename>");
-            return;
-        }
-        if (hname.trim().isEmpty()) {
-            Common.tell(sender, pre + "&cYou must specify a horse to copy.");
-//            user = "help";
             return;
         }
         new Database().copyHorse(sender, user, hname);
     }
 
-    @Subcommand("remove")
-    @CommandPermission("horsemover.admin")
-    @CommandCompletion("@Players")
-    public void onRemove(CommandSender sender, @Default("help") String user, @Default(" ") String horse) {
-        if (CheckSender.isCommand(sender)) {
-            return;
-        }
-        if ((user.equals("help"))) {
-            Common.tell(sender, pre + "&eTo remove horse from db: &a/horsemover remove <username> <horsename>");
-            return;
-        }
-        if (horse.trim().isEmpty()) {
-            Common.tell(sender, pre + "&cYou must specify a horse to remove.");
-//            user = "help";
-            return;
-        }
-        Common.tell(sender, pre + "Checkpoint A");
-        new Database().removeHorse(sender, user, horse);
-    }
-
-    @Subcommand("config")
-    @CommandPermission("horsemover.admin")
-    public void onAdmin(CommandSender sender) {
+    @Subcommand ("config")
+    @CommandPermission ("horsemover.admin")
+    public void onAdmin (CommandSender sender) {
         if (CheckSender.isCommand(sender)) {
             return;
         }
@@ -115,52 +92,67 @@ public class HM extends BaseCommand {
                 pre + "Move to: " + Database.tableTo);
     }
 
-    @Subcommand("connect|c")
-    @CommandPermission("horsemover.admin")
-    public void onConnect(CommandSender sender) {
+    @Subcommand ("connect|c")
+    @CommandPermission ("horsemover.admin")
+    public void onConnect (CommandSender sender) {
         MySQL.connect();
         new Database().showStatus(sender);
     }
 
-    @Subcommand("disconnect|dc")
-    @CommandPermission("horsemover.admin")
-    public void onDisconnect(CommandSender sender) {
+    @Subcommand ("disconnect|dc")
+    @CommandPermission ("horsemover.admin")
+    public void onDisconnect (CommandSender sender) {
         MySQL.disconnect();
         new Database().showStatus(sender);
     }
 
-    @Subcommand("reconnect|rc")
-    @CommandPermission("horsemover.admin")
-    public void onRecon(CommandSender sender) {
+    @Subcommand ("reconnect|rc")
+    @CommandPermission ("horsemover.admin")
+    public void onRecon (CommandSender sender) {
         onDisconnect(sender);
         onConnect(sender);
     }
 
-    @Subcommand("status")
-    @CommandPermission("horsemover.admin")
-    public void onStatus(CommandSender sender) {
+    @Subcommand ("status")
+    public void onStatus (CommandSender sender) {
         new Database().showStatus(sender);
     }
 
 
-    @Subcommand("reload")
-    @CommandPermission("horsemover.admin")
-    public void onReload(CommandSender sender) {
+    @Subcommand ("reload")
+    public void onReload (CommandSender sender) {
         Settings.init();
         Common.tell(sender, pre + "&2Settings reloaded");
     }
 
-    @Default
-    @Subcommand("info|version")
-    public void onVer(CommandSender sender) {
-        Common.tell(sender, pre + "&9--===&a " + HorseMover.getPlugin().getDescription().getFullName() + " &9===--",
-                pre + "by &6" + HorseMover.getPlugin().getDescription().getAuthors(),
-//                pre + "&eVersion " + version,
-                pre + "&f see &e/horsemover help &ffor usage.");
+    @Subcommand ("info|version")
+    public void onVer (CommandSender sender) {
+        Common.tell(sender, pre + HorseMover.getPlugin().getDescription().getName(),
+                pre + "&eVersion " + version);
     }
 
+    @CommandAlias ("getnew")
+    public void onGetNew (CommandSender sender, String user, @Default ("all") String horse) {
+
+        new Database().getHorse(sender, user, horse);
+    }
 }
 
+/*
+    @Subcommand("remove")
+    @CommandPermission("horsemover.admin")
+    @CommandCompletion("@Players")
+    public void onremove(CommandSender sender, String name) {
+        if (!CheckSender.isPlayer(sender)) {
+            return;
+        }
+        if (name.equals("help")) {
+            Common.tell(sender, pre + "&bTo remove a player from the table &a/remove <username>");
+            return;
+        }
+        new Database().purgePlayer(sender, name);
+    }
+*/
 
 
 

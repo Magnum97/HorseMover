@@ -15,7 +15,7 @@ public final @Setter
 @Getter
 class HorseMover extends JavaPlugin {
 
-    private static HorseMover plugin;
+    public static HorseMover plugin;
     private static BukkitCommandManager cmdMgr;
     @Getter
     private static Database database;
@@ -27,6 +27,7 @@ class HorseMover extends JavaPlugin {
     public SimpleConfig cfg;
     public static String pre;
     public static String version;
+
 
     public static HorseMover getPlugin() {
         return plugin;
