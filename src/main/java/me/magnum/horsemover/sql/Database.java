@@ -1,13 +1,14 @@
 package me.magnum.horsemover.sql;
 
 import lombok.Data;
-import me.magnum.lib.CheckSender;
 import me.magnum.lib.Common;
 import me.vagdedes.mysql.basic.Config;
 import me.vagdedes.mysql.database.MySQL;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +20,6 @@ import static me.magnum.horsemover.HorseMover.plugin;
 import static me.magnum.horsemover.HorseMover.pre;
 import static me.magnum.horsemover.util.Settings.*;
 import static me.vagdedes.mysql.database.SQL.createTable;
-import static me.vagdedes.mysql.database.SQL.insertData;
 import static me.vagdedes.mysql.database.SQL.tableExists;
 
 public @Data
@@ -39,6 +39,18 @@ class Database {
 	PreparedStatement get;
 	PreparedStatement insert;
 	PreparedStatement delete;
+
+	//<Player ,  <HorseName,  Horse>>
+	public HashMap<Player, HashMap<String, AbstractHorse>> activeHorses = new HashMap<Player, HashMap<String, AbstractHorse>>();
+
+	public Dataworks dataworks = new Dataworks(plugin, host, port, database, username, password);
+//	public Dataworks dataworks = new DataWorks(this,
+//			getConfig().getString("Database.Host" , "localhost"),
+//			getConfig().getString("Database.Port" , "3306"),
+//			getConfig().getString("Database.Database" , "horserpg"),
+//			getConfig().getString("Database.UserName" , "root"),
+//			getConfig().getString("Database.Password" , "password"));
+
 
 	private void dbSet (char database) {
 		String noSSL = "?useSSL=false";
@@ -124,22 +136,50 @@ class Database {
 		}
 	}
 
-	public void getHorse (CommandSender sender, String user, String horse) {
-		if (CheckSender.isCommand(sender))
-			return;
-		else {
-			OfflinePlayer offlinePlayer=Bukkit.getOfflinePlayer(user);
-			playerId = offlinePlayer.getUniqueId().toString();
-			HashMap<String, HashMap<String, Object>> horses = new Dataworks(plugin, host, port, database, username, password).getInfo(playerId);
+	public void getHorse (CommandSender sender, String user, String horsename) {
+		MySQL.disconnect();
+		dbSet('a');
+		MySQL.connect();
+		OfflinePlayer offp = Bukkit.getOfflinePlayer(user);
+		playerId = offp.getUniqueId().toString();
+		Map<String, HashMap<String, Object>> horses = new HashMap<String, HashMap<String, Object>>();
 
-			String id = horses.get(horse).get("id").toString();
-			String hname = horses.get(horse).get("name").toString();
-			String color = horses.get(horse).get("color").toString();
-			String breed = horses.get(horse).get("breed").toString();
-			String gender = horses.get(horse).get("gender").toString();
-			String result = "&EID#: &a" + id + "&e Name: &f" + hname + " &8is a " + color.toLowerCase() + " " + breed.toLowerCase() + " " + gender.toLowerCase();
-			Common.tell(sender, pre + result);
+		try {
+			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
+
+			while (rs.next()) {
+				HashMap<String, Object> horse = new HashMap<String, Object>();
+				String hName = rs.getString("h_Name");
+				horse.put("id", rs.getInt("ID"));
+				horse.put("name", hName);
+				horse.put("color", rs.getString("h_Color"));
+				horse.put("variant", rs.getString("h_Variant"));
+				horse.put("style", rs.getString("h_Style"));
+				horse.put("gender", rs.getString("h_Gender"));
+				horse.put("breed", rs.getString("h_Breed"));
+				horse.put("armor", rs.getString("h_Armor"));
+				horse.put("saddle", rs.getInt("h_Saddle"));
+				horse.put("tDistance", (rs.getDouble("travel_dist")));
+				horse.put("agility", rs.getDouble("s_Agility"));
+				horse.put("switfness", rs.getDouble("s_Swiftness"));
+				horse.put("agLvl", rs.getInt("ag_Lvl"));
+				horse.put("swLvl", rs.getInt("sw_Lvl"));
+				horse.put("energy", rs.getInt("s_Energy"));
+				horses.put(hName, horse);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (!MySQL.isConnected()) {
+				MySQL.disconnect();
+			}
 		}
+
+		horses.forEach((k,v) -> {
+//			String hname = horses.get()
+			Common.tell(sender, pre + (String.format("Horses: %s",k)));
+		});
 	}
 
 	// --Commented out by Inspection START (12/13/2018 1:04 AM):

@@ -3,7 +3,6 @@ package me.magnum.horsemover.sql;
 import me.magnum.horsemover.HorseMover;
 import me.magnum.lib.Common;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -108,7 +107,7 @@ public class Dataworks {
 			while (resultSet.next()) {
 				HashMap<String, Object> horse = new HashMap<String, Object>();
 				String hName = resultSet.getString("h_Name");
-				horse.put("id", Integer.valueOf(resultSet.getInt("ID")));
+				horse.put("id", resultSet.getInt("ID"));
 				horse.put("name", hName);
 				horse.put("color", resultSet.getString("h_Color"));
 				horse.put("variant", resultSet.getString("h_Variant"));
@@ -117,12 +116,12 @@ public class Dataworks {
 				horse.put("breed", resultSet.getString("h_Breed"));
 				horse.put("armor", resultSet.getString("h_Armor"));
 				horse.put("saddle", resultSet.getInt("h_Saddle"));
-				horse.put("tDistance", Double.valueOf(resultSet.getDouble("travel_dist")));
-				horse.put("agility", Double.valueOf(resultSet.getDouble("s_Agility")));
-				horse.put("switfness", Double.valueOf(resultSet.getDouble("s_Swiftness")));
+				horse.put("tDistance", (resultSet.getDouble("travel_dist")));
+				horse.put("agility", resultSet.getDouble("s_Agility"));
+				horse.put("switfness", resultSet.getDouble("s_Swiftness"));
 				horse.put("agLvl", resultSet.getInt("ag_Lvl"));
 				horse.put("swLvl", resultSet.getInt("sw_Lvl"));
-				horse.put("energy", Integer.valueOf(resultSet.getInt("s_Energy")));
+				horse.put("energy", resultSet.getInt("s_Energy"));
 				horses.put(hName, horse);
 
 			}
