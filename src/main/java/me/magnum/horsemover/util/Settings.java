@@ -12,8 +12,8 @@ import java.util.List;
 public class Settings extends SimpleConfig {
 
 
-    private Settings(String fileName) {
-        super(fileName);
+	private Settings (String fileName) {
+		super(fileName);
 
         setHeader(new String[]{
                 "--------------------------------------------------------",
@@ -27,7 +27,7 @@ public class Settings extends SimpleConfig {
     }
 
 
-    private void onLoad() {
+	private void onLoad () {
 
         Config.setHost(getString("sql.host"));
         Config.setPort(getString("sql.port"));
@@ -44,30 +44,30 @@ public class Settings extends SimpleConfig {
         new Database().Setup();
     }
 
-    // Added upon request of Ch.S. - parses a String list into a Material list
-    private List<Material> getMaterialList(String path) {
-        final List<Material> list = new ArrayList<>();
+	// Added upon request of Ch.S. - parses a String list into a Material list
+	private List<Material> getMaterialList (String path) {
+		final List<Material> list = new ArrayList<>();
 
-        for (final String raw : getStringList(path)) {
-            // Material class is case sensitive, so make sure the name is in caps and has underscore instead of spaces
-            final String correctedName = raw.toUpperCase().replace(" ", "_");
+		for (final String raw : getStringList(path)) {
+			// Material class is case sensitive, so make sure the name is in caps and has underscore instead of spaces
+			final String correctedName = raw.toUpperCase().replace(" ", "_");
 
-            try {
-                final Material mat = Material.valueOf(correctedName);
+			try {
+				final Material mat = Material.valueOf(correctedName);
 
-                if (mat != null)
-                    list.add(mat);
+				if (mat != null)
+					list.add(mat);
 
-            } catch (final IllegalArgumentException ex) {
-                throw new RuntimeException("An item " + raw + " (" + correctedName + ") in " + path + " is not a valid Material!");
-            }
-        }
+			} catch (final IllegalArgumentException ex) {
+				throw new RuntimeException("An item " + raw + " (" + correctedName + ") in " + path + " is not a valid Material!");
+			}
+		}
 
-        return list;
-    }
-    // End of added
+		return list;
+	}
+	// End of added
 
-    public static void init() {
-        new Settings("settings.yml").onLoad();
-    }
+	public static void init () {
+		new Settings("settings.yml").onLoad();
+	}
 }
