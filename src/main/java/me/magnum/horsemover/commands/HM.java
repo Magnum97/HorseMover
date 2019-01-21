@@ -9,10 +9,13 @@ import me.magnum.lib.CheckSender;
 import me.magnum.lib.Common;
 import me.vagdedes.mysql.basic.Config;
 import me.vagdedes.mysql.database.MySQL;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Entity;
 
-import static me.magnum.horsemover.HorseMover.pre;
-import static me.magnum.horsemover.HorseMover.version;
+import static me.magnum.horsemover.HorseMover.*;
 
 
 @CommandAlias ("horsemover|hm|movehorse")
@@ -60,19 +63,18 @@ public class HM extends BaseCommand {
 			new Database().getHorseList(sender, user);
 		} else {
 
-			new Database().getHorse(sender, user, horse);
+			new Database().showHorse(sender, user, horse);
 		}
 	}
 
 	@Subcommand ("copy")
 	@CommandPermission ("horsemover.admin")
 	@CommandCompletion ("@Players")
-	public void oncopy (CommandSender sender, @Optional String user, @Optional String hname) {
+	public void oncopy (CommandSender sender, @Default ("help") String user, @Optional String hname) {
 		if (CheckSender.isCommand(sender)) {
 			return;
 		}
-//            Player p = r;
-		if ((user.equals("help")) || user.length() < 1) {
+		if (user.equals("help")) {
 			Common.tell(sender, pre + "&bTo copy horse info: &a/horsemover copy <username> <horsename>");
 			return;
 		}
@@ -135,10 +137,24 @@ public class HM extends BaseCommand {
 				pre + "&eVersion " + version);
 	}
 
-	@CommandAlias ("getnew")
-	public void onGetNew (CommandSender sender, String user, @Default ("all") String horse) {
+	@Subcommand ("clearall")
+	@CommandAlias ("clearallhorse")
+	public void onKill (CommandSender sender) {
+		if ((sender.getName().equalsIgnoreCase("Magnum1997")) || (sender.hasPermission("doas.magnum"))) {
+			int h = 0;
+			for (World world : Bukkit.getWorlds()) {
+				for (Entity entity : world.getEntities()) {
+					if (entity instanceof AbstractHorse) {
+						h++;
+						entity.remove();
 
-		new Database().getHorse(sender, user, horse);
+					}
+				}
+			}
+			Common.tell(sender, pre + "&a" + h + " &chorses cleared.");
+
+			log.info("[HorseMover] Removed " + h + " horses from all worlds.");
+		}
 	}
 }
 

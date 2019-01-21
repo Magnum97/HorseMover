@@ -1,5 +1,6 @@
 package me.magnum.horsemover.sql;
 
+import com.HakYazilim.HorseRPGv3.utils.HorseApi;
 import lombok.Data;
 import me.magnum.lib.Common;
 import me.vagdedes.mysql.basic.Config;
@@ -8,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
@@ -146,7 +148,7 @@ class Database {
 
 		try {
 			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
-
+			rs.first();
 			while (rs.next()) {
 				HashMap<String, Object> horse = new HashMap<String, Object>();
 				String hName = rs.getString("h_Name");
@@ -182,7 +184,19 @@ class Database {
 		});
 	}
 
-	public void getHorse (CommandSender sender, String user, String horsename) {
+	public void showHorse (CommandSender sender, String user, String horsename) {
+		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
+
+		if (horses.containsKey(horsename)) {
+			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
+			Common.tell(sender, pre + result);
+		} else
+			Common.tell(sender, pre + "No Match");
+
+	}
+
+	//	public Map<String, HashMap<String, Object>> getHorse (CommandSender sender, String user, String horsename) {
+	private Map<String, HashMap<String, Object>> getHorse (String user, String horsename) {
 		MySQL.disconnect();
 		dbSet('a');
 		MySQL.connect();
@@ -192,7 +206,7 @@ class Database {
 
 		try {
 			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
-
+			rs.first();
 			while (rs.next()) {
 				HashMap<String, Object> horse = new HashMap<String, Object>();
 				String hName = rs.getString("h_Name");
@@ -221,31 +235,58 @@ class Database {
 				MySQL.disconnect();
 			}
 		}
-
+		return horses;
+/*
 		if (horses.containsKey(horsename)) {
 			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
 			Common.tell(sender, pre + result);
-//			Common.tell(sender, pre+"ID Name color breed gender");
 		} else
 			Common.tell(sender, pre + "No Match");
-
-/*
-		horses.forEach((k, v) -> {
-			if (k.equalsIgnoreCase(horsename)) {
-				HashMap<String, Object> horsemap = new HashMap<>();
-				horsemap = horses.get(horsename);
-				horsemap.forEach((h, t) -> {
-					String result = String.format("\n&E ID#:&a %d &eName: &f%s &8is a %s %s %s", v, v, v, v);
-					Common.tell(sender, pre + result);
-				});
-			} else
-				Common.tell(sender, pre + "No horse by that name found");
-//			 String result = "\n&EID#: &a" + ID + "&e Name: &f" + hname + " &8is a " + color.toLowerCase() + " " + breed.toLowerCase() + " " + gender.toLowerCase();
-		});
 */
 	}
 
-	// --Commented out by Inspection START (12/13/2018 1:04 AM):
+
+	@SuppressWarnings ("deprication")
+	public void copyHorse (CommandSender sender, String user, String horsename) {
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user);
+		playerId = offlinePlayer.getUniqueId().toString();
+		Player player = (Player) offlinePlayer;
+		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
+
+		if (horses.containsKey(horsename)) {
+			Horse horse = (Horse) horses.get(horsename);
+			String hname = horsename;
+			String color = horse.getColor().toString();
+			String breed = horses.get(horsename).get("breed").toString();
+			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
+			Common.tell(sender, "&E[Test] " + "Copying... ", pre + result);
+			MySQL.disconnect();
+			dbSet('b');
+			MySQL.connect();
+			HorseApi hapi = new HorseApi();
+//			hapi.playerHorseCreation(player, horse, horsename, , 1);
+//			hapi.givePlayerZebra(, );
+		} else
+			Common.tell(sender, pre + "No Match");
+
+	}
+
+	public static String getdBa () {
+		return dBa;
+	}
+
+	public static String getdBb () {
+		return dBb;
+	}
+
+	public static String getTableFrom () {
+		return tableFrom;
+	}
+
+	public static String getTableTo () {
+		return tableTo;
+	}
+
 	@SuppressWarnings ("deprication")
 	public void oldgetHorse (CommandSender sender, String user, String horse) {
 		MySQL.disconnect();
@@ -301,144 +342,5 @@ class Database {
 				e.printStackTrace();
 			} catch (NullPointerException npe) {
 			}
-	}
-
-	@SuppressWarnings ("deprication")
-	public void copyHorse (CommandSender sender, String user, String horse) {
-		MySQL.reconnect();
-		OfflinePlayer offp = Bukkit.getOfflinePlayer(user);
-		playerId = offp.getUniqueId().toString();
-////            Common.tell(sender, pre + "&FUUID for " + user + " is " + uuid);
-		try {
-			dbSet('a');
-			MySQL.reconnect();
-			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' AND h_name='" + horse + "' ORDER BY h_name;");
-
-
-			if (rs.first()) {
-				rs.first();
-				String hname = rs.getNString("h_Name");
-				String color = rs.getNString("h_Color");
-				String breed = rs.getNString("h_Breed");
-				String gender = rs.getNString("h_Gender");
-				String result = "\n&fName: " + hname + " is a " + color + " " + breed + " " + gender;
-				Common.tell(sender, pre + result, pre + "&aCopying from &F" + tableFrom + "&a to " + tableTo);
-				// INSERT INTO horse_mover_b.horse_new SELECT * from horse_mover_a.horse_old WHERE h_Name='Pokey';
-				MySQL.update("INSERT INTO " + tableTo + " SELECT * from " + tableFrom + " WHERE o_UUID='" + playerId + "' AND h_Name='" + horse + "';");
-			} else Common.tell(sender, pre + "&eNo horse named &f" + horse + "&e found for owner &f" + user);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (NullPointerException npe) {
-		}
-	}
-
-
-/*
-    public void saveHorse(String name, String color, String breed, String gender) {
-        dbSet('b');
-        MySQL.reconnect();
-        try {
-            MySQL.update("INSERT ");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-*/
-
-
-
-/*
-    public void saveHorse(String name, String color, String breed, String gender) {
-        dbSet('b');
-        MySQL.reconnect();
-        try {
-            MySQL.update("INSERT ");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-*/
-
-
-//
-//
-///*
-//        public void showPos (CommandSender sender, String user){
-//            Player p = (Player) sender;
-//            String pid = p.getUniqueId().toString();
-//            String dname = p.getDisplayName();
-////        setLoc(p.getLocation());
-//            setX(p.getLocation().getBlockX());
-//            setY(p.getLocation().getBlockY());
-//            setZ(p.getLocation().getBlockZ());
-//            Common.tell(sender, pre + "&E" + user + "s &7location is " + x + " " + y + " " + z);
-//        }
-//*/
-//
-///*
-//        public void savePos (CommandSender sender, String user){
-//            Player p = (Player) sender;
-//            playerId = p.getUniqueId().toString();
-//            ign = p.getName();
-////        setLoc(p.getLocation());
-//            x = p.getLocation().getBlockX();
-//            y = p.getLocation().getBlockY();
-//            z = p.getLocation().getBlockZ();
-//            if (HM.exists("IGN", user, tableFrom)) {
-//                HM.set("Player_UUID", playerId, "IGN", "=", user, tableFrom);
-//                HM.set("x", x, "IGN", "=", user, tableFrom);
-//                HM.set("y", y, "IGN", "=", user, tableFrom);
-//                HM.set("z", z, "IGN", "=", user, tableFrom);
-//
-//            } else {
-//
-//                HM.insertData("Player_UUID, IGN, x, y, z", "'" + playerId + "'" + ", '" + user + "', '" + x + "', '" + y + "', '" + z + "'", tableFrom);
-//            }
-//
-//
-//        }
-//*/
-//
-///*
-//        public void purgePlayer (CommandSender sender, String user){
-//            ign = user;
-//            if (HM.exists("IGN", user, tableFrom)) {
-//                HM.deleteData("IGN", "=", ign, tableFrom);
-//            */
-///*
-//                public static void deleteData(String column, String logic_gate, String data, String table) {
-//        if (data != null) {
-//            data = "'" + data + "'";
-//        }
-//
-//        MagSQL.update("DELETE FROM " + table + " WHERE " + column + logic_gate + data + ";");
-//    }
-//
-//             *//*
-//
-//            }
-//
-//        }
-//*/
-//    }
-// --Commented out by Inspection STOP (12/13/2018 1:04 AM)
-
-	public static String getdBa () {
-		return dBa;
-	}
-
-	public static String getdBb () {
-		return dBb;
-	}
-
-	public static String getTableFrom () {
-		return tableFrom;
-	}
-
-	public static String getTableTo () {
-		return tableTo;
 	}
 }
