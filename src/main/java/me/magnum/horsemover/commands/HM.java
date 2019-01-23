@@ -15,6 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static me.magnum.horsemover.HorseMover.*;
 
 
@@ -50,7 +53,7 @@ public class HM extends BaseCommand {
 	@Subcommand ("get")
 	@CommandPermission ("horsemover.admin")
 	@CommandCompletion ("@Players")
-	public void onGet (CommandSender sender, @Default ("help") String user, @Default ("all") String horse) {
+	public void onGet (CommandSender sender, @Default ("help") String user, @Default ("all") String horsename) {
 		if (CheckSender.isCommand(sender)) {
 			return;
 		}
@@ -59,11 +62,20 @@ public class HM extends BaseCommand {
 			Common.tell(sender, pre + "&bTo see a player's list of horses : &a/hm get <username>", pre + "&bTo get horse info: &a/hm get <username> (horsename)");
 			return;
 		}
-		if (horse.equalsIgnoreCase("all")) {
-			new Database().getHorseList(sender, user);
-		} else {
 
-			new Database().showHorse(sender, user, horse);
+		Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
+
+		if (horsename.equalsIgnoreCase("all")) {
+			horses.forEach((k, v) -> {
+				Common.tell(sender, pre + (String.format("Horses: %s", k)));
+			});
+		} else {
+//			if (horses.toString().equalsIgnoreCase(horsename)) {
+			if (horses.containsKey(horsename)) {
+				String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
+				Common.tell(sender, pre + result);
+			} else
+				Common.tell(sender, pre + "No Match");
 		}
 	}
 

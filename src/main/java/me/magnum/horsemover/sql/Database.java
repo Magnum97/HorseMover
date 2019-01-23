@@ -138,7 +138,7 @@ class Database {
 		}
 	}
 
-	public void getHorseList (CommandSender sender, String user) {
+	public Map<String, HashMap<String, Object>> getHorseList (String user) {
 		MySQL.disconnect();
 		dbSet('a');
 		MySQL.connect();
@@ -177,23 +177,58 @@ class Database {
 				MySQL.disconnect();
 			}
 		}
-
-		horses.forEach((k, v) -> {
-//			String hname = horses.get()
-			Common.tell(sender, pre + (String.format("Horses: %s", k)));
-		});
+		return horses;
+//		horses.forEach((k, v) -> {
+//			Common.tell(sender, pre + (String.format("Horses: %s", k)));
+//		});
 	}
 
 	public void showHorse (CommandSender sender, String user, String horsename) {
-		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
+//		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
+		Map<String, HashMap<String, Object>> horses = new HashMap<>();
+		MySQL.disconnect();
+		dbSet('a');
+		MySQL.connect();
 
-		if (horses.containsKey(horsename)) {
+		try {
+			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
+			rs.first();
+			while (rs.next()) {
+				HashMap<String, Object> horse = new HashMap<String, Object>();
+				String hName = rs.getString("h_Name");
+				horse.put("id", rs.getInt("ID"));
+				horse.put("name", hName);
+				horse.put("color", rs.getString("h_Color"));
+				horse.put("variant", rs.getString("h_Variant"));
+				horse.put("style", rs.getString("h_Style"));
+				horse.put("gender", rs.getString("h_Gender"));
+				horse.put("breed", rs.getString("h_Breed"));
+				horse.put("armor", rs.getString("h_Armor"));
+				horse.put("saddle", rs.getInt("h_Saddle"));
+				horse.put("tDistance", (rs.getDouble("travel_dist")));
+				horse.put("agility", rs.getDouble("s_Agility"));
+				horse.put("switfness", rs.getDouble("s_Swiftness"));
+				horse.put("agLvl", rs.getInt("ag_Lvl"));
+				horse.put("swLvl", rs.getInt("sw_Lvl"));
+				horse.put("energy", rs.getInt("s_Energy"));
+				horses.put(hName, horse);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (MySQL.isConnected()) {
+				MySQL.disconnect();
+			}
+		}
+
+		if (horses.toString().equalsIgnoreCase(horsename)) {
 			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
 			Common.tell(sender, pre + result);
 		} else
 			Common.tell(sender, pre + "No Match");
-
 	}
+
 
 	//	public Map<String, HashMap<String, Object>> getHorse (CommandSender sender, String user, String horsename) {
 	private Map<String, HashMap<String, Object>> getHorse (String user, String horsename) {
@@ -213,10 +248,10 @@ class Database {
 				horse.put("id", rs.getInt("ID"));
 				horse.put("name", hName);
 				horse.put("color", rs.getString("h_Color"));
-//				horse.put("variant", rs.getString("h_Variant"));
-//				horse.put("style", rs.getString("h_Style"));
 				horse.put("breed", rs.getString("h_Breed"));
 				horse.put("gender", rs.getString("h_Gender"));
+//				horse.put("variant", rs.getString("h_Variant"));
+//				horse.put("style", rs.getString("h_Style"));
 //				horse.put("armor", rs.getString("h_Armor"));
 //				horse.put("saddle", rs.getInt("h_Saddle"));
 //				horse.put("tDistance", (rs.getDouble("travel_dist")));
