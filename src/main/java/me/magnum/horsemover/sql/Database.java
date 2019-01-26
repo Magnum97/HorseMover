@@ -1,6 +1,5 @@
 package me.magnum.horsemover.sql;
 
-import com.HakYazilim.HorseRPGv3.utils.HorseApi;
 import lombok.Data;
 import me.magnum.lib.Common;
 import me.vagdedes.mysql.basic.Config;
@@ -9,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
@@ -178,133 +176,29 @@ class Database {
 			}
 		}
 		return horses;
-//		horses.forEach((k, v) -> {
-//			Common.tell(sender, pre + (String.format("Horses: %s", k)));
-//		});
 	}
 
-	public void showHorse (CommandSender sender, String user, String horsename) {
+//	@SuppressWarnings ("deprication")
+//	public void copyHorse (CommandSender sender, String user,String horsename) {
+//		Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
+//		if (horses.containsKey(horsename)) {
+//			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
+//			Common.tell(sender, pre + "Preparing to copy:",result);
+//		} else
+//			Common.tell(sender, pre + "No Match");
+//
+//
+////		RPGHorse newHorse = new HorseApi().playerHorseCreation(playerId, horse,username, breed ,1 );
+//
+///*		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user);
+//		playerId = offlinePlayer.getUniqueId().toString();
+//		Player player = (Player) offlinePlayer;
 //		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
-		Map<String, HashMap<String, Object>> horses = new HashMap<>();
-		MySQL.disconnect();
-		dbSet('a');
-		MySQL.connect();
-
-		try {
-			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
-			rs.first();
-			while (rs.next()) {
-				HashMap<String, Object> horse = new HashMap<String, Object>();
-				String hName = rs.getString("h_Name");
-				horse.put("id", rs.getInt("ID"));
-				horse.put("name", hName);
-				horse.put("color", rs.getString("h_Color"));
-				horse.put("variant", rs.getString("h_Variant"));
-				horse.put("style", rs.getString("h_Style"));
-				horse.put("gender", rs.getString("h_Gender"));
-				horse.put("breed", rs.getString("h_Breed"));
-				horse.put("armor", rs.getString("h_Armor"));
-				horse.put("saddle", rs.getInt("h_Saddle"));
-				horse.put("tDistance", (rs.getDouble("travel_dist")));
-				horse.put("agility", rs.getDouble("s_Agility"));
-				horse.put("switfness", rs.getDouble("s_Swiftness"));
-				horse.put("agLvl", rs.getInt("ag_Lvl"));
-				horse.put("swLvl", rs.getInt("sw_Lvl"));
-				horse.put("energy", rs.getInt("s_Energy"));
-				horses.put(hName, horse);
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (MySQL.isConnected()) {
-				MySQL.disconnect();
-			}
-		}
-
-		if (horses.toString().equalsIgnoreCase(horsename)) {
-			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
-			Common.tell(sender, pre + result);
-		} else
-			Common.tell(sender, pre + "No Match");
-	}
+//
+//*/
+//	}
 
 
-	//	public Map<String, HashMap<String, Object>> getHorse (CommandSender sender, String user, String horsename) {
-	private Map<String, HashMap<String, Object>> getHorse (String user, String horsename) {
-		MySQL.disconnect();
-		dbSet('a');
-		MySQL.connect();
-		OfflinePlayer offp = Bukkit.getOfflinePlayer(user);
-		playerId = offp.getUniqueId().toString();
-		Map<String, HashMap<String, Object>> horses = new HashMap<String, HashMap<String, Object>>();
-
-		try {
-			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
-			rs.first();
-			while (rs.next()) {
-				HashMap<String, Object> horse = new HashMap<String, Object>();
-				String hName = rs.getString("h_Name");
-				horse.put("id", rs.getInt("ID"));
-				horse.put("name", hName);
-				horse.put("color", rs.getString("h_Color"));
-				horse.put("breed", rs.getString("h_Breed"));
-				horse.put("gender", rs.getString("h_Gender"));
-//				horse.put("variant", rs.getString("h_Variant"));
-//				horse.put("style", rs.getString("h_Style"));
-//				horse.put("armor", rs.getString("h_Armor"));
-//				horse.put("saddle", rs.getInt("h_Saddle"));
-//				horse.put("tDistance", (rs.getDouble("travel_dist")));
-//				horse.put("agility", rs.getDouble("s_Agility"));
-//				horse.put("switfness", rs.getDouble("s_Swiftness"));
-//				horse.put("agLvl", rs.getInt("ag_Lvl"));
-//				horse.put("swLvl", rs.getInt("sw_Lvl"));
-//				horse.put("energy", rs.getInt("s_Energy"));
-				horses.put(hName, horse);
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (!MySQL.isConnected()) {
-				MySQL.disconnect();
-			}
-		}
-		return horses;
-/*
-		if (horses.containsKey(horsename)) {
-			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
-			Common.tell(sender, pre + result);
-		} else
-			Common.tell(sender, pre + "No Match");
-*/
-	}
-
-
-	@SuppressWarnings ("deprication")
-	public void copyHorse (CommandSender sender, String user, String horsename) {
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user);
-		playerId = offlinePlayer.getUniqueId().toString();
-		Player player = (Player) offlinePlayer;
-		Map<String, HashMap<String, Object>> horses = getHorse(user, horsename);
-
-		if (horses.containsKey(horsename)) {
-			Horse horse = (Horse) horses.get(horsename);
-			String hname = horsename;
-			String color = horse.getColor().toString();
-			String breed = horses.get(horsename).get("breed").toString();
-			String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
-			Common.tell(sender, "&E[Test] " + "Copying... ", pre + result);
-			MySQL.disconnect();
-			dbSet('b');
-			MySQL.connect();
-			HorseApi hapi = new HorseApi();
-//			hapi.playerHorseCreation(player, horse, horsename, , 1);
-//			hapi.givePlayerZebra(, );
-		} else
-			Common.tell(sender, pre + "No Match");
-
-	}
 
 	public static String getdBa () {
 		return dBa;

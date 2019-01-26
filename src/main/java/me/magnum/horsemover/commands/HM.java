@@ -4,16 +4,21 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import me.magnum.horsemover.HorseMover;
 import me.magnum.horsemover.sql.Database;
+import me.magnum.horsemover.util.RPGHorse;
 import me.magnum.horsemover.util.Settings;
 import me.magnum.lib.CheckSender;
 import me.magnum.lib.Common;
 import me.vagdedes.mysql.basic.Config;
 import me.vagdedes.mysql.database.MySQL;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +77,13 @@ public class HM extends BaseCommand {
 		} else {
 //			if (horses.toString().equalsIgnoreCase(horsename)) {
 			if (horses.containsKey(horsename)) {
-				String result = "&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" + horses.get(horsename).get("name") + " &7is a &f" + horses.get(horsename).get("color") + " " + horses.get(horsename).get("breed") + " " + horses.get(horsename).get("gender");
+				String result =
+						"&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" +
+								horses.get(horsename).get("name") + " &7is a &f" +
+								horses.get(horsename).get("color") + " " +
+								horses.get(horsename).get("style") + " " +
+								horses.get(horsename).get("breed") + " " +
+								horses.get(horsename).get("gender");
 				Common.tell(sender, pre + result);
 			} else
 				Common.tell(sender, pre + "No Match");
@@ -82,7 +93,7 @@ public class HM extends BaseCommand {
 	@Subcommand ("copy")
 	@CommandPermission ("horsemover.admin")
 	@CommandCompletion ("@Players")
-	public void oncopy (CommandSender sender, @Default ("help") String user, @Optional String hname) {
+	public void oncopy (CommandSender sender, @Default ("help") String user, @Optional String horsename) {
 		if (CheckSender.isCommand(sender)) {
 			return;
 		}
@@ -90,7 +101,43 @@ public class HM extends BaseCommand {
 			Common.tell(sender, pre + "&bTo copy horse info: &a/horsemover copy <username> <horsename>");
 			return;
 		}
-		new Database().copyHorse(sender, user, hname);
+		Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
+		if (horses.containsKey(horsename)) {
+			String id = horses.get(horsename).get("id").toString();
+//			String hname = horses.get(horsename).get("name").toString();
+			String color = horses.get(horsename).get("color").toString();
+			String style = horses.get(horsename).get("style").toString();
+			String breed = horses.get(horsename).get("breed").toString();
+			String gender = horses.get(horsename).get("gender").toString();
+
+			String result =
+					"&E ID#:&a " + id + " &eName: &a" +
+							horsename + " &7is a &f" +
+							color + " " +
+							style + " " +
+							breed + " " +
+							gender;
+			Common.tell(sender, pre + "&ePreparing to copy &f" + horsename + "&e for &f" + user,
+					pre + result);
+			OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(user);
+			Player caster = (Player) sender;
+//			Player owner = (Player) offlinePlayer;
+
+			RPGHorse newHorse = new RPGHorse(offlinePlayer, horsename, color, style, breed, gender);
+			Horse realHorse = caster.getWorld().spawn(caster.getLocation(), Horse.class);
+			realHorse.setTamed(true);
+			realHorse.setAdult();
+			realHorse.setOwner(caster);
+			realHorse.setCustomName(horsename);
+			realHorse.setMetadata("horseRPG_uuid", new FixedMetadataValue((HorseMover.getPlugin()), newHorse.horseUUID));
+			realHorse.setColor(newHorse.color);
+			realHorse.setStyle(newHorse.style);
+			realHorse.setInvulnerable(true);
+
+
+		} else Common.tell(sender, pre + "&cCould not find that horse.");
+
+
 	}
 
 	@Subcommand ("config")
