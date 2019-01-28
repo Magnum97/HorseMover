@@ -29,20 +29,23 @@ public class Settings extends SimpleConfig {
 
 	private void onLoad () {
 
-        Config.setHost(getString("sql.host"));
-        Config.setPort(getString("sql.port"));
-        Config.setUser(getString("sql.user"));
-        Config.setPassword(getString("sql.password"));
-//        Config.setMinimumConnections(getInt("sql.hikari.mincon"));
-//        Config.setMaximumConnections(getInt("sql.hikari.maxcon"));
-//        Config.setConnectionTimeout(getInt("sql.hikari.timeour"));
-        Database.dBa = getString("sql.dba");
-        Database.dBb =  getString("sql.dbb");
-        Database.tableFrom = getString("sql.fromtable");
-        Database.tableTo = getString("sql.totable");
-        HorseMover.setPre(getString("plugin.prefix"));
-        new Database().Setup();
-    }
+		host = (getString("sql.host"));
+		port = (getString("sql.port"));
+		username = (getString("sql.user"));
+		password = (getString("sql.password"));
+		database = getString("sql.dba");
+		Config.setHost(host);
+		Config.setPassword(port);
+		Config.setDatabase(database);
+		Config.setUser(username);
+		Config.setPassword(password);
+		Database.dBa = getString("sql.dba");
+		Database.dBb = getString("sql.dbb");
+		Database.tableFrom = getString("sql.fromtable");
+		Database.tableTo = getString("sql.totable");
+		HorseMover.setPre(getString("plugin.prefix"));
+		new Database().setup();
+	}
 
 	// Added upon request of Ch.S. - parses a String list into a Material list
 	private List<Material> getMaterialList (String path) {

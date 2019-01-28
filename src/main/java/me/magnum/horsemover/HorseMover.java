@@ -10,13 +10,14 @@ import me.magnum.horsemover.util.Settings;
 import me.magnum.horsemover.util.SimpleConfig;
 import me.vagdedes.mysql.database.MySQL;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
 public final @Setter
 @Getter
-class HorseMover extends JavaPlugin {
+class HorseMover extends JavaPlugin implements Listener {
 
     public static HorseMover plugin;
     private static BukkitCommandManager cmdMgr;

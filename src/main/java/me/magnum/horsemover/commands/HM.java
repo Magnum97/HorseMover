@@ -2,6 +2,8 @@ package me.magnum.horsemover.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.Optional;
+import com.HakYazilim.HorseRPGv3.utils.HorseBreeds;
 import me.magnum.horsemover.HorseMover;
 import me.magnum.horsemover.sql.Database;
 import me.magnum.horsemover.util.RPGHorse;
@@ -20,8 +22,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static me.magnum.horsemover.HorseMover.*;
 
@@ -77,13 +78,19 @@ public class HM extends BaseCommand {
 		} else {
 //			if (horses.toString().equalsIgnoreCase(horsename)) {
 			if (horses.containsKey(horsename)) {
+				String id = horses.get(horsename).get("id").toString();
+				String color = horses.get(horsename).get("color").toString();
+				String style = horses.get(horsename).get("style").toString();
+				String breed = horses.get(horsename).get("breed").toString();
+				String gender = horses.get(horsename).get("gender").toString();
+
 				String result =
-						"&E ID#:&a " + horses.get(horsename).get("id") + " &eName: &a" +
-								horses.get(horsename).get("name") + " &7is a &f" +
-								horses.get(horsename).get("color") + " " +
-								horses.get(horsename).get("style") + " " +
-								horses.get(horsename).get("breed") + " " +
-								horses.get(horsename).get("gender");
+						"&E ID#:&a " + id + " &eName: &a" +
+								horsename + " &7is a &f" +
+								color + " " +
+								style + " " +
+								breed + " " +
+								gender;
 				Common.tell(sender, pre + result);
 			} else
 				Common.tell(sender, pre + "No Match");
@@ -104,12 +111,13 @@ public class HM extends BaseCommand {
 		Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
 		if (horses.containsKey(horsename)) {
 			String id = horses.get(horsename).get("id").toString();
-//			String hname = horses.get(horsename).get("name").toString();
 			String color = horses.get(horsename).get("color").toString();
 			String style = horses.get(horsename).get("style").toString();
 			String breed = horses.get(horsename).get("breed").toString();
 			String gender = horses.get(horsename).get("gender").toString();
-
+			if (breed.equalsIgnoreCase("NOTCHOSEN")) {
+				breed = (randomBreed().getBreedName());
+			}
 			String result =
 					"&E ID#:&a " + id + " &eName: &a" +
 							horsename + " &7is a &f" +
@@ -133,6 +141,9 @@ public class HM extends BaseCommand {
 			realHorse.setColor(newHorse.color);
 			realHorse.setStyle(newHorse.style);
 			realHorse.setInvulnerable(true);
+
+			new Database().saveHorse(newHorse);
+
 
 
 		} else Common.tell(sender, pre + "&cCould not find that horse.");
@@ -215,30 +226,14 @@ public class HM extends BaseCommand {
 			log.info("[HorseMover] Removed " + h + " horses from all worlds.");
 		}
 	}
+
+	private static final List<HorseBreeds> VALUES = Collections.unmodifiableList((Arrays.asList(HorseBreeds.values())));
+	private static final int SIZE = VALUES.size();
+	private static final Random rand = new Random();
+
+	private static HorseBreeds randomBreed () {
+		return VALUES.get(rand.nextInt(SIZE));
+	}
+
+
 }
-
-/*
-    @Subcommand("remove")
-    @CommandPermission("horsemover.admin")
-    @CommandCompletion("@Players")
-    public void onremove(CommandSender sender, String name) {
-        if (!CheckSender.isPlayer(sender)) {
-            return;
-        }
-        if (name.equals("help")) {
-            Common.tell(sender, pre + "&bTo remove a player from the table &a/remove <username>");
-            return;
-        }
-        new Database().purgePlayer(sender, name);
-    }
-*/
-
-
-
-
-
-
-
-
-
-

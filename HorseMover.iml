@@ -61,6 +61,7 @@
     <orderEntry type="library" name="Maven: co.aikar:minecraft-timings:1.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: code.nextgen.sqlibrary:SQLibrary-Spigot:1.1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.HakYazilim.HorseRPG:HorseRPGv3:3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.arcaniax.hdb:HeadDatabase:4.6.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.HakYazilim.horserpg:HorseRPGv3:3.0.1" level="project" />
   </component>
 </module>
