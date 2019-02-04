@@ -1,6 +1,5 @@
 package me.magnum.horsemover.util;
 
-import com.HakYazilim.HorseRPGv3.main.Main;
 import com.HakYazilim.HorseRPGv3.utils.Api;
 import com.HakYazilim.HorseRPGv3.utils.HorseApi;
 import me.magnum.horsemover.HorseMover;
@@ -55,9 +54,9 @@ public class RPGHorse {
 
 	public static Map<String, String> traitMap () {
 		Map<String, String> traitMap = new HashMap<>();
-		traitMap.put("energetic", "&a30% less energy usage");
+//		traitMap.put("energetic", "&a30% less energy usage");
 		traitMap.put("quick learner", "&a20% more xp gain");
-		traitMap.put("legend", "It came from the old world");
+//		traitMap.put("Legacy", "Learns fast. Experienced");
 		return traitMap;
 	}
 
@@ -98,8 +97,8 @@ public class RPGHorse {
 		this.color = Color.valueOf(color);
 		this.style = Horse.Style.valueOf(style);
 		this.variant = Variant.HORSE;
-		this.trait = new ArrayList<>(Main.getInstance().traits.keySet()).get(ThreadLocalRandom.current().nextInt(0,
-				Main.getInstance().traits.size()));
+//		this.trait = "quick leaner";
+		this.trait = new ArrayList<>(traits.keySet()).get(ThreadLocalRandom.current().nextInt(0, traits.size()));
 		this.armor = new ItemStack(Material.AIR);
 		this.energy = 100;
 		this.saddle = new ItemStack(Material.AIR);

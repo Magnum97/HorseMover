@@ -15,16 +15,16 @@ public class Settings extends SimpleConfig {
 	private Settings (String fileName) {
 		super(fileName);
 
-        setHeader(new String[]{
-                "--------------------------------------------------------",
-                " Your configuration file got updated automatically!",
-                " ",
-                " Unfortunately, due to how Bukkit saves .yml files,",
-                " all comments in your file were lost. Please open",
-                " " + fileName + " from jar to browse the default values.",
-                "--------------------------------------------------------"
-        });
-    }
+		setHeader(new String[]{
+				"--------------------------------------------------------",
+				" Your configuration file got updated automatically!",
+				" ",
+				" Unfortunately, due to how Bukkit saves .yml files,",
+				" all comments in your file were lost. Please open",
+				" " + fileName + " from jar to browse the default values.",
+				"--------------------------------------------------------"
+		});
+	}
 
 
 	private void onLoad () {
@@ -33,14 +33,14 @@ public class Settings extends SimpleConfig {
 		port = (getString("sql.port"));
 		username = (getString("sql.user"));
 		password = (getString("sql.password"));
-		database = getString("sql.dba");
+		database = (getString("sql.dba"));
 		Config.setHost(host);
 		Config.setPassword(port);
 		Config.setDatabase(database);
 		Config.setUser(username);
 		Config.setPassword(password);
-		Database.dBa = getString("sql.dba");
-		Database.dBb = getString("sql.dbb");
+		Database.dba = getString("sql.dba");
+		Database.dbb = getString("sql.dbb");
 		Database.tableFrom = getString("sql.fromtable");
 		Database.tableTo = getString("sql.totable");
 		HorseMover.setPre(getString("plugin.prefix"));

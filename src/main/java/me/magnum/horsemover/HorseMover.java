@@ -1,7 +1,6 @@
 package me.magnum.horsemover;
 
 import co.aikar.commands.BukkitCommandManager;
-import eu.hexagonmc.spigot.annotation.plugin.Plugin;
 import lombok.Getter;
 import lombok.Setter;
 import me.magnum.horsemover.commands.HM;
@@ -59,7 +58,7 @@ class HorseMover extends JavaPlugin implements Listener {
 
 /*
         Common.registerCommand(new HM(
-                "sql", "Check sql status", "/HM", Arrays.asList("status", "dBa")));
+                "sql", "Check sql status", "/HM", Arrays.asList("status", "dba")));
 
     }
 */

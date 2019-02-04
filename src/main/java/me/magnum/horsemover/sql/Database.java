@@ -26,8 +26,11 @@ public @Data
 class Database {
 //    private final MagSQL magSQL;
 
-	public static String dBa;
-	public static String dBb;
+	public void run () {
+	}
+
+	public static String dba;
+	public static String dbb;
 	public static String tableFrom;
 	public static String tableTo;
 
@@ -56,10 +59,10 @@ class Database {
 		String noSSL = "?useSSL=false";
 		switch (database) {
 			case 'a':
-				Config.setDatabase(dBa + noSSL);
+				Config.setDatabase(dba + noSSL);
 				break;
 			case 'b':
-				Config.setDatabase(dBb + noSSL);
+				Config.setDatabase(dbb + noSSL);
 				break;
 		}
 	}
@@ -262,12 +265,27 @@ class Database {
 		}
 	}
 
-	public static String getdBa () {
-		return dBa;
+	public void killHorse (int ID) {
+		MySQL.disconnect();
+		dbSet('a');
+		MySQL.connect();
+		try {
+			if (MySQL.isConnected()) {
+				MySQL.update("DELETE from " + tableFrom + " WHERE ID = '" + ID + "';");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		MySQL.disconnect();
 	}
 
-	public static String getdBb () {
-		return dBb;
+	public static String getDba () {
+		return dba;
+	}
+
+	public static String getDbb () {
+		return dbb;
 	}
 
 	public static String getTableFrom () {

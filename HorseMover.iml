@@ -33,10 +33,10 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="HorseRPGv2" level="project" />
     <orderEntry type="library" name="HorseRPGReloaded" level="project" />
     <orderEntry type="library" name="HorseRPGv31" level="application" />
     <orderEntry type="library" name="HeadDatabase" level="application" />
+    <orderEntry type="library" name="HorseRPGv2" level="application" />
     <orderEntry type="library" name="Maven: me.magnum.lib:Common:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: fr.minuskube.inv:smart-invs:1.2.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />

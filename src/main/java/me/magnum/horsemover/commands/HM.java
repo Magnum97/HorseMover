@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -28,6 +29,7 @@ import static me.magnum.horsemover.HorseMover.*;
 
 
 @CommandAlias ("horsemover|hm|movehorse")
+@CommandPermission ("horsemover.use")
 public class HM extends BaseCommand {
 
 	public HM () {
@@ -39,62 +41,64 @@ public class HM extends BaseCommand {
 	public void onHelp (CommandSender sender) {
 		Common.tell(sender, pre + "&FVersion&A " + version,
 				pre + "&e-------------Commands-------------------",
-				"",
-				//pre + "&fSubCommands for &lhorsemover:",
+				pre,
+				pre + "&fSubCommands for &lhorsemover:",
 				pre + "&bHorse info: &a/hm get &e<username> <horse name>",
 				pre + "&FTo backup a horse: &A/hm copy &eusername horsename",
-				pre + "",
+				pre,
 				pre + "&bShow settings: &a/hm config",
 				pre + "&FConnect, disconnect or reconnect database:",
 				pre + "&a/hm connect &F|&A /hm disconnect &F|&A /reconnect",
-				pre + " ",
+				pre,
 				pre + "&bDatabase status: &a/horsemover status",
 				pre + "&fReload settings &a/hm reload",
-				pre + "",
+				pre,
 				pre + "&fMore help: &e/hm <cmd> help",
 				pre + "&e----------------------------------------");
-		//pre + "&bFetch user info from dBa: &a/hm get <username> <horsename>",
+		//pre + "&bFetch user info from dba: &a/hm get <username> <horsename>",
 	}
 
 	@Subcommand ("get")
-	@CommandPermission ("horsemover.admin")
 	@CommandCompletion ("@Players")
 	public void onGet (CommandSender sender, @Default ("help") String user, @Default ("all") String horsename) {
 		if (CheckSender.isCommand(sender)) {
 			return;
 		}
-//            Player p = (Player) sender;
 		if (user.equals("help")) {
 			Common.tell(sender, pre + "&bTo see a player's list of horses : &a/hm get <username>", pre + "&bTo get horse info: &a/hm get <username> (horsename)");
 			return;
 		}
+		new BukkitRunnable() {
+			@Override
+			public void run () {
 
-		Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
+				Map<String, HashMap<String, Object>> horses = new Database().getHorseList(user);
 
-		if (horsename.equalsIgnoreCase("all")) {
-			horses.forEach((k, v) -> {
-				Common.tell(sender, pre + (String.format("Horses: %s", k)));
-			});
-		} else {
-//			if (horses.toString().equalsIgnoreCase(horsename)) {
-			if (horses.containsKey(horsename)) {
-				String id = horses.get(horsename).get("id").toString();
-				String color = horses.get(horsename).get("color").toString();
-				String style = horses.get(horsename).get("style").toString();
-				String breed = horses.get(horsename).get("breed").toString();
-				String gender = horses.get(horsename).get("gender").toString();
+				if (horsename.equalsIgnoreCase("all")) {
+					horses.forEach((k, v) -> {
+						Common.tell(sender, pre + (String.format("Horses: %s", k)));
+					});
+				} else {
+					if (horses.containsKey(horsename)) {
+						String id = horses.get(horsename).get("id").toString();
+						String color = horses.get(horsename).get("color").toString();
+						String style = horses.get(horsename).get("style").toString();
+						String breed = horses.get(horsename).get("breed").toString();
+						String gender = horses.get(horsename).get("gender").toString();
 
-				String result =
-						"&E ID#:&a " + id + " &eName: &a" +
-								horsename + " &7is a &f" +
-								color + " " +
-								style + " " +
-								breed + " " +
-								gender;
-				Common.tell(sender, pre + result);
-			} else
-				Common.tell(sender, pre + "No Match");
-		}
+						String result =
+								"&E ID#:&a " + id + " &eName: &a" +
+										horsename + " &7is a &f" +
+										color + " " +
+										style + " " +
+										breed + " " +
+										gender;
+						Common.tell(sender, pre + result);
+					} else
+						Common.tell(sender, pre + "No Match");
+				}
+			}
+		}.runTaskAsynchronously(HorseMover.plugin);
 	}
 
 	@Subcommand ("copy")
@@ -142,8 +146,17 @@ public class HM extends BaseCommand {
 			realHorse.setStyle(newHorse.style);
 			realHorse.setInvulnerable(true);
 
-			new Database().saveHorse(newHorse);
+			Common.tell(sender, pre + "Moving horse to new pasture...");
 
+			new BukkitRunnable() {
+				@Override
+				public void run () {
+					new Database().saveHorse(newHorse);
+					new Database().killHorse(Integer.parseInt(id));
+				}
+			}.runTaskAsynchronously(HorseMover.plugin);
+
+			Common.tell(sender, pre + "Cleaning up old pasture..", pre + "Done.");
 
 
 		} else Common.tell(sender, pre + "&cCould not find that horse.");
@@ -161,10 +174,10 @@ public class HM extends BaseCommand {
 				pre + "Host and port: " + Config.getHost() + ":" + Config.getPort(),
 				pre + "&7Username: " + Config.getUser(),
 				pre + "&7Password: ******** &e<check settings.yml",
-				pre + "Database: " + Database.getdBa(),
+				pre + "Database: " + Database.getDba(),
 				pre + "Move from: " + Database.tableFrom,
 //                "",
-//                pre + "Database B: " + Database.getdBb(),
+//                pre + "Database B: " + Database.getDbb(),
 				pre + "Move to: " + Database.tableTo);
 	}
 
@@ -190,12 +203,14 @@ public class HM extends BaseCommand {
 	}
 
 	@Subcommand ("status")
+	@CommandPermission ("horsemover.admin")
 	public void onStatus (CommandSender sender) {
 		new Database().showStatus(sender);
 	}
 
 
 	@Subcommand ("reload")
+	@CommandPermission ("horsemover.admin")
 	public void onReload (CommandSender sender) {
 		Settings.init();
 		Common.tell(sender, pre + "&2Settings reloaded");
@@ -208,7 +223,8 @@ public class HM extends BaseCommand {
 	}
 
 	@Subcommand ("clearall")
-	@CommandAlias ("clearallhorse")
+	@CommandAlias ("clearallhorses")
+	@CommandPermission ("horsemover.clear")
 	public void onKill (CommandSender sender) {
 		if ((sender.getName().equalsIgnoreCase("Magnum1997")) || (sender.hasPermission("doas.magnum"))) {
 			int h = 0;

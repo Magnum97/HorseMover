@@ -205,7 +205,7 @@ public class SimpleConfig extends YamlConfiguration {
             }
         }
 
-        // hacky workaround: prevent infinite loop due to how get works in the parent class
+        //  prevent infinite loop due to how get works in the parent class
         final String m = new Throwable().getStackTrace()[1].getMethodName();
 
         // Add path prefix, but only when the default file doesn't exist
