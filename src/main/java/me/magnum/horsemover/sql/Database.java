@@ -173,7 +173,6 @@ class Database {
 
 		try {
 			ResultSet rs = MySQL.query("SELECT * FROM " + tableFrom + " WHERE o_UUID='" + playerId + "' ORDER BY h_name;");
-			rs.first();
 			while (rs.next()) {
 				HashMap<String, Object> horse = new HashMap<String, Object>();
 				String hName = rs.getString("h_Name");

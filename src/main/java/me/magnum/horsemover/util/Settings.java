@@ -29,11 +29,11 @@ public class Settings extends SimpleConfig {
 
 	private void onLoad () {
 
-		host = (getString("sql.host"));
-		port = (getString("sql.port"));
-		username = (getString("sql.user"));
-		password = (getString("sql.password"));
-		database = (getString("sql.dba"));
+		String host = (getString("sql.host"));
+		String port = (getString("sql.port"));
+		String username = (getString("sql.user"));
+		String password = (getString("sql.password"));
+		String database = (getString("sql.dba"));
 		Config.setHost(host);
 		Config.setPassword(port);
 		Config.setDatabase(database);
