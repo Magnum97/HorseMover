@@ -1,14 +1,18 @@
 package me.magnum.horsemover;
 
 import co.aikar.commands.BukkitCommandManager;
+import fr.minuskube.inv.InventoryManager;
 import lombok.Getter;
 import lombok.Setter;
+import me.arcaniax.hdb.api.DatabaseLoadEvent;
+import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.magnum.horsemover.commands.HM;
 import me.magnum.horsemover.sql.Database;
 import me.magnum.horsemover.util.Settings;
 import me.magnum.horsemover.util.SimpleConfig;
 import me.vagdedes.mysql.database.MySQL;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,6 +35,8 @@ class HorseMover extends JavaPlugin implements Listener {
     public static String pre;
     public static String version;
     public static Logger log = Bukkit.getLogger();
+    public static InventoryManager iManager;
+    public static HeadDatabaseAPI headAPI;
 
 
     public static HorseMover getPlugin() {
@@ -48,11 +54,19 @@ class HorseMover extends JavaPlugin implements Listener {
         Settings.init();
         registerCommand();
         version = getDescription().getVersion();
-
+        iManager = new InventoryManager(plugin);
+        iManager.init();
+        this.getServer().getPluginManager().registerEvents(this, this);
     }
-
+    
+    @EventHandler
+    private void hdbLoad (DatabaseLoadEvent event) {
+        headAPI = new HeadDatabaseAPI();
+        
+    }
     private void registerCommand() {
         cmdMgr = new BukkitCommandManager(this);
+        cmdMgr.enableUnstableAPI("help");
         cmdMgr.registerCommand(new HM());
     }
 

@@ -7,7 +7,7 @@
     <groupId>me.magnum.horsemover</groupId>
     <artifactId>HorseMover</artifactId>
     <version>
-        2.0-b0220-2349
+        2.0-b0303-0202-invtest
     </version>
     <packaging>jar</packaging>
 
@@ -39,6 +39,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -116,8 +119,8 @@
         <!-- My Common Library -->
         <dependency>
             <groupId>me.magnum.lib</groupId>
-            <artifactId>Common</artifactId>
-            <version>1.0.0</version>
+            <artifactId>CommonLibrary</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -207,7 +210,7 @@
                 </dependency>
         -->
         <dependency>
-            <groupId>me.arcaniax.hdb</groupId>
+            <groupId>me.arcaniax</groupId>
             <artifactId>HeadDatabase</artifactId>
             <version>4.6.3</version>
             <scope>provided</scope>
